@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Naturavon</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Naturavon</string>
+    <string name="nav_header_subtitle">dayjanuario@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="clientes">Clientes</string>
+    <string name="pedidos">Pedidos</string>
+    <string name="vendas">Vendas</string>
+    <string name="nome">Nome</string>
+    <string name="referencia">Referência</string>
+    <string name="telefone">Telefone</string>
+    <string name="cadastrar">CADASTRAR</string>
+    <string name="remover">Remover</string>
+    <string name="campanha">Campanha</string>
+    <string name="codigo">Código</string>
+    <string name="pagina">Página</string>
+    <string name="qtde">Qtde</string>
+    <string name="valor">Valor</string>
+    <string name="total">Total</string>
+    <string name="cliente">Cliente</string>
+    <string name="produto">Produto</string>
+    <string name="selecione_o_pedido">Pedido</string>
+    <string name="selecione_o_cliente">Cliente</string>
+    <string name="calcular">CALCULAR</string>
+    <string name="pesquisar">PESQUISAR</string>
+    <string name="id">ID</string>
+</resources>
