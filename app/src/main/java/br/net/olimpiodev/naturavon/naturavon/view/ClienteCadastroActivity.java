@@ -23,7 +23,6 @@ public class ClienteCadastroActivity extends AppCompatActivity {
     private AppDatabase db;
     private TextInputLayout tilNome, tilReferencia;
     private EditText etNome, etReferencia, etTelefone;
-    private Button btCadastrarCliente;
     private int clienteId = 0;
 
     @Override
@@ -43,7 +42,7 @@ public class ClienteCadastroActivity extends AppCompatActivity {
         tilNome = findViewById(R.id.til_nome_cliente);
         tilReferencia = findViewById(R.id.til_referencia_cliente);
 
-        btCadastrarCliente = findViewById(R.id.btCadastrarCliente);
+        Button btCadastrarCliente = findViewById(R.id.btCadastrarCliente);
         btCadastrarCliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

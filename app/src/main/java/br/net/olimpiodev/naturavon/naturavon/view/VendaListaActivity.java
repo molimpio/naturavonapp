@@ -2,28 +2,37 @@ package br.net.olimpiodev.naturavon.naturavon.view;
 
 import android.annotation.SuppressLint;
 import android.arch.persistence.room.Room;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
+import java.util.Objects;
 
 import br.net.olimpiodev.naturavon.naturavon.AppDatabase;
 import br.net.olimpiodev.naturavon.naturavon.R;
 import br.net.olimpiodev.naturavon.naturavon.model.ChaveValor;
+import br.net.olimpiodev.naturavon.naturavon.model.Venda;
 import br.net.olimpiodev.naturavon.naturavon.model.VendaClientePedido;
 
 public class VendaListaActivity extends AppCompatActivity {
@@ -106,11 +115,68 @@ public class VendaListaActivity extends AppCompatActivity {
                 startActivityForResult(cadastroIntent, 1);
                 return true;
             case R.id.removerVenda:
-                //TODO: falta fazer remover e tela home
+                removerVenda();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void removerVenda() {
+        AlertDialog alertDialog;
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Remover Venda");
+        alertDialogBuilder.setMessage("Para remover a venda preencha o ID");
+
+        final EditText etVendaId = new EditText(this);
+
+        etVendaId.setHint("ID da venda");
+
+        etVendaId.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        linearLayout.addView(etVendaId);
+
+        alertDialogBuilder.setView(linearLayout);
+
+        alertDialogBuilder.setPositiveButton("Excluir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String vendaId = etVendaId.getText().toString();
+                if (vendaId.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Campo ID é obrigatório", Toast.LENGTH_SHORT).show();
+                } else {
+                    new AsyncTask<Void, Void, Void>() {
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            int id = Integer.parseInt(vendaId);
+                            Venda venda = db.vendaDao().getVendaById(id);
+                            db.vendaDao().delete(venda);
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            Toast.makeText(getApplicationContext(), "Venda excluída com sucesso", Toast.LENGTH_SHORT).show();
+                            clearRows();
+                        }
+                    }.execute();
+                }
+            }
+        });
+
+        alertDialogBuilder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "Ação cancelada", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private void startSpinners() {
@@ -123,9 +189,13 @@ public class VendaListaActivity extends AppCompatActivity {
         spPedidos.setAdapter(adapterPedidos);
     }
 
-    private void addRows() {
+    private void clearRows() {
         tbVendas.removeAllViews();
+        tvTotal.setText("");
+    }
 
+    private void addRows() {
+        clearRows();
         TextView textViewC0 = new TextView(this);
         textViewC0.setText(getResources().getString(R.string.id));
         textViewC0.setPadding(10, 10, 10, 10);
@@ -192,7 +262,11 @@ public class VendaListaActivity extends AppCompatActivity {
             }
 
             TextView textViewProduto = new TextView(this);
-            textViewProduto.setText(v.getProduto());
+            String produto = v.getProduto();
+            if (v.getProduto().length() > 10) {
+                produto = v.getProduto().substring(0, 10);
+            }
+            textViewProduto.setText(produto);
             textViewProduto.setPadding(10, 10, 10, 10);
 
             TextView textViewValor = new TextView(this);

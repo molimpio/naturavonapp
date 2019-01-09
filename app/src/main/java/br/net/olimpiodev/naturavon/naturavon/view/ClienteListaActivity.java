@@ -25,7 +25,6 @@ public class ClienteListaActivity extends AppCompatActivity {
 
     private AppDatabase db;
     private RecyclerView rvClientes;
-    private FloatingActionButton fabCliente;
     private ClienteAdapter clienteAdapter;
     private List<Cliente> clientes;
 
@@ -40,7 +39,7 @@ public class ClienteListaActivity extends AppCompatActivity {
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, AppDatabase.DB_NAME).build();
         rvClientes = findViewById(R.id.rv_clientes);
 
-        fabCliente = findViewById(R.id.fab_cadastro_cliente);
+        FloatingActionButton fabCliente = findViewById(R.id.fab_cadastro_cliente);
         fabCliente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

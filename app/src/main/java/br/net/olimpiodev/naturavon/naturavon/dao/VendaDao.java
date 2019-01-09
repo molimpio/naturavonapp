@@ -1,6 +1,7 @@
 package br.net.olimpiodev.naturavon.naturavon.dao;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
@@ -16,8 +17,30 @@ public interface VendaDao {
     @Insert
     void insert(Venda... venda);
 
-    @Update
-    void update(Venda... venda);
+    @Delete
+    void delete(Venda... venda);
+
+    @Query("SELECT * FROM venda WHERE id = :vendaId")
+    Venda getVendaById(int vendaId);
+
+    @Query("SELECT SUM(total) FROM venda")
+    Double getTotalVendas();
+
+    @Query("SELECT COUNT(id) FROM venda")
+    Integer getQtdeVendas();
+
+    @Query("SELECT SUM(total) FROM venda WHERE pedido_id = :pedidoId")
+    Double getTotalVendasByPedidoId(int pedidoId);
+
+    @Query("UPDATE venda SET sincronizado = :sincronizado WHERE id = :vendaId")
+    void atualizarVendasSincronizadas(boolean sincronizado, int vendaId);
+
+    @Query("SELECT v.id AS idVenda, v.codigo, v.pagina, v.produto, v.quantidade, v.valor," +
+            "v.total, v.cliente_id AS clienteId, v.pedido_id AS pedidoId FROM venda AS v " +
+            "INNER JOIN cliente AS c ON c.id == v.cliente_id " +
+            "INNER JOIN pedido AS p ON p.id == v.pedido_id " +
+            "WHERE v.sincronizado = :sincronizado ORDER BY v.id ASC")
+    List<VendaClientePedido> getVendasNaoSincronizados(boolean sincronizado);
 
     @Query("SELECT v.id AS idVenda, v.codigo, v.pagina, v.produto, v.quantidade, v.valor," +
             "v.total, c.nome AS cliente, p.campanha AS pedido, v.produto, " +

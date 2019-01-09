@@ -69,7 +69,7 @@ public class Produto implements Serializable {
 
     @Override
     public String toString() {
-        return "Produto{" +
+        return "{" +
                 "id=" + id +
                 ", codigo='" + codigo + '\'' +
                 ", pagina='" + pagina + '\'' +

@@ -133,7 +133,7 @@ public class Venda implements Serializable {
 
     @Override
     public String toString() {
-        return "Venda{" +
+        return "{" +
                 "id=" + id +
                 ", codigo='" + codigo + '\'' +
                 ", pagina=" + pagina +

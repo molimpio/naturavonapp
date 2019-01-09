@@ -48,4 +48,14 @@ public class Pedido implements Serializable {
     public void setSincronizado(Boolean sincronizado) {
         this.sincronizado = sincronizado;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "id=" + id +
+                ", data='" + data + '\'' +
+                ", campanha='" + campanha + '\'' +
+                ", sincronizado=" + sincronizado +
+                '}';
+    }
 }

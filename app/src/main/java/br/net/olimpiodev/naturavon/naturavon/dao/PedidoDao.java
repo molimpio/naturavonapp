@@ -24,4 +24,13 @@ public interface PedidoDao {
 
     @Query("SELECT p.id AS chave, p.campanha AS valor FROM pedido AS p ORDER BY id DESC")
     List<ChaveValor> getPedidosDropDown();
+
+    @Query("SELECT * FROM pedido ORDER BY id DESC LIMIT 1")
+    Pedido getUltimoPedido();
+
+    @Query("SELECT * FROM pedido WHERE sincronizado = :sincronizado ORDER BY id ASC")
+    List<Pedido> getPedidosNaoSincronizados(boolean sincronizado);
+
+    @Query("UPDATE pedido SET sincronizado = :sincronizado WHERE id = :pedidoId")
+    void atualizarPedidosSincronizados(boolean sincronizado, int pedidoId);
 }
