@@ -213,6 +213,7 @@ public class Utils {
 
                 @Override
                 protected void onPostExecute(Void aVoid) {
+                    Toast.makeText(contextU, "Dados sincronizados com sucesso", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }
             }.execute();

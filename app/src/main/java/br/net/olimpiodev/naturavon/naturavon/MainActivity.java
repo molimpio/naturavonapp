@@ -27,12 +27,6 @@ import br.net.olimpiodev.naturavon.naturavon.view.VendaListaActivity;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private AppDatabase db;
-    private TextView tvTotalVendas, tvTotalClientes, tvInfoPedido;
-    private double total = 0.0, totalVendasUltimoPedido = 0.0;
-    private int qtdeVendas, totalClientes = 0;
-    private Pedido pedido;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,49 +43,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        tvTotalVendas = findViewById(R.id.tv_total_vendas);
-        tvTotalClientes = findViewById(R.id.tv_total_clientes);
-        tvInfoPedido = findViewById(R.id.tv_info_pedido);
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, AppDatabase.DB_NAME).build();
-        setarPainelHome();
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private void setarPainelHome() {
-        new AsyncTask<Void, Void, Void>(){
-            @Override
-            protected Void doInBackground(Void... voids) {
-                qtdeVendas = db.vendaDao().getQtdeVendas();
-                if (qtdeVendas > 0) {
-                    total = db.vendaDao().getTotalVendas();
-                    totalClientes = db.clienteDao().getQtdeClientes();
-                    pedido = db.pedidoDao().getUltimoPedido();
-                    totalVendasUltimoPedido = db.vendaDao().getTotalVendasByPedidoId(pedido.getId());
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                if (qtdeVendas > 0) {
-                    @SuppressLint("DefaultLocale")
-                    String totalGeral = "R$ " + String.format("%.2f", total);
-
-                    String total = "A soma de todas as vendas realizadas é: \n" + totalGeral;
-                    tvTotalVendas.setText(total);
-
-                    String totalC = "Quantidade de clientes cadastrados no sistema: " + totalClientes;
-                    tvTotalClientes.setText(totalC);
-
-                    @SuppressLint("DefaultLocale")
-                    String totalVendasUltimoPed = "R$ " + String.format("%.2f", totalVendasUltimoPedido);
-
-                    String pedidoC = "Seu último pedido foi " + pedido.getCampanha() +
-                            " com total \n" + totalVendasUltimoPed;
-                    tvInfoPedido.setText(pedidoC);
-                }
-            }
-        }.execute();
     }
 
     @Override

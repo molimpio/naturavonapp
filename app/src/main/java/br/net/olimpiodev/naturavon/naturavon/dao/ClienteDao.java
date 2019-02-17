@@ -27,9 +27,6 @@ public interface ClienteDao {
     @Query("SELECT c.id AS chave, (c.nome || ' - ' || c.referencia) AS valor FROM cliente AS c ORDER BY nome ASC")
     List<ChaveValor> getClientesDropDown();
 
-    @Query("SELECT COUNT(id) FROM cliente")
-    Integer getQtdeClientes();
-
     @Query("SELECT * FROM cliente WHERE sincronizado = :sincronizado ORDER BY id ASC")
     List<Cliente> getClientesNaoSincronizados(boolean sincronizado);
 

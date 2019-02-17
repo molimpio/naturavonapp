@@ -23,15 +23,6 @@ public interface VendaDao {
     @Query("SELECT * FROM venda WHERE id = :vendaId")
     Venda getVendaById(int vendaId);
 
-    @Query("SELECT SUM(total) FROM venda")
-    Double getTotalVendas();
-
-    @Query("SELECT COUNT(id) FROM venda")
-    Integer getQtdeVendas();
-
-    @Query("SELECT SUM(total) FROM venda WHERE pedido_id = :pedidoId")
-    Double getTotalVendasByPedidoId(int pedidoId);
-
     @Query("UPDATE venda SET sincronizado = :sincronizado WHERE id = :vendaId")
     void atualizarVendasSincronizadas(boolean sincronizado, int vendaId);
 
@@ -44,7 +35,7 @@ public interface VendaDao {
 
     @Query("SELECT v.id AS idVenda, v.codigo, v.pagina, v.produto, v.quantidade, v.valor," +
             "v.total, c.nome AS cliente, p.campanha AS pedido, v.produto, " +
-            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId FROM venda AS v " +
+            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId, v.pago FROM venda AS v " +
             "INNER JOIN cliente AS c ON c.id == v.cliente_id " +
             "INNER JOIN pedido AS p ON p.id == v.pedido_id " +
             "WHERE p.id = :pedidoId AND c.id = :clienteId")
@@ -52,7 +43,7 @@ public interface VendaDao {
 
     @Query("SELECT v.id AS idVenda, v.codigo, v.pagina, v.produto, v.quantidade, v.valor," +
             "v.total, c.nome AS cliente, p.campanha AS pedido, v.produto, " +
-            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId FROM venda AS v " +
+            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId, v.pago FROM venda AS v " +
             "INNER JOIN cliente AS c ON c.id == v.cliente_id " +
             "INNER JOIN pedido AS p ON p.id == v.pedido_id " +
             "WHERE p.id = :pedidoId ORDER BY c.nome ASC")
@@ -60,9 +51,13 @@ public interface VendaDao {
 
     @Query("SELECT v.id AS idVenda, v.codigo, v.pagina, v.produto, v.quantidade, v.valor," +
             "v.total, c.nome AS cliente, p.campanha AS pedido, v.produto, " +
-            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId FROM venda AS v " +
+            "v.cliente_id AS clienteId, v.pedido_id AS pedidoId, v.pago FROM venda AS v " +
             "INNER JOIN cliente AS c ON c.id == v.cliente_id " +
             "INNER JOIN pedido AS p ON p.id == v.pedido_id " +
             "WHERE c.id = :clienteId ORDER BY p.id ASC")
     List<VendaClientePedido> getVendasByClienteId(int clienteId);
+
+    @Query("UPDATE venda SET pago = 1 where id = :vendaId")
+    void baixarVendaById(int vendaId);
+
 }

@@ -21,11 +21,13 @@
     <string name="valor">Valor</string>
     <string name="total">Total</string>
     <string name="cliente">Cliente</string>
+    <string name="pago">Pago</string>
     <string name="produto">Produto</string>
     <string name="selecione_o_pedido">Pedido</string>
     <string name="selecione_o_cliente">Cliente</string>
     <string name="calcular">CALCULAR</string>
     <string name="pesquisar">PESQUISAR</string>
+    <string name="baixar_vendas">Baixa Pagamento</string>
     <string name="id">ID</string>
     <string name="sincronizar">Sincronizar</string>
 </resources>

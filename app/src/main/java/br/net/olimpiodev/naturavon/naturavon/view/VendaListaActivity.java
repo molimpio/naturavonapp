@@ -26,11 +26,13 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import br.net.olimpiodev.naturavon.naturavon.AppDatabase;
 import br.net.olimpiodev.naturavon.naturavon.R;
+import br.net.olimpiodev.naturavon.naturavon.Utils;
 import br.net.olimpiodev.naturavon.naturavon.model.ChaveValor;
 import br.net.olimpiodev.naturavon.naturavon.model.Venda;
 import br.net.olimpiodev.naturavon.naturavon.model.VendaClientePedido;
@@ -46,6 +48,8 @@ public class VendaListaActivity extends AppCompatActivity {
     private TableLayout tbVendas;
     private TextView tvTotal;
     private Switch swPedido, swCliente;
+    private Button btBaixarVendas;
+    private List<Integer> vendasIdsBaixar = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +98,14 @@ public class VendaListaActivity extends AppCompatActivity {
             public void onClick(View v) {
                 GetVendas getVendas = new GetVendas();
                 getVendas.execute();
+            }
+        });
+
+        btBaixarVendas = findViewById(R.id.bt_baixar_vendas);
+        btBaixarVendas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baixarVendas();
             }
         });
 
@@ -180,13 +192,13 @@ public class VendaListaActivity extends AppCompatActivity {
     }
 
     private void startSpinners() {
-        ArrayAdapter<ChaveValor> adapterClientes = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_dropdown_item, clientes);
-        spCliente.setAdapter(adapterClientes);
-
         ArrayAdapter<ChaveValor> adapterPedidos = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, pedidos);
         spPedidos.setAdapter(adapterPedidos);
+
+        ArrayAdapter<ChaveValor> adapterClientes = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item, clientes);
+        spCliente.setAdapter(adapterClientes);
     }
 
     private void clearRows() {
@@ -195,6 +207,10 @@ public class VendaListaActivity extends AppCompatActivity {
     }
 
     private void addRows() {
+        btBaixarVendas.setVisibility(View.VISIBLE);
+        vendasIdsBaixar = new ArrayList<>();
+        String statusVenda = "";
+
         clearRows();
         TextView textViewC0 = new TextView(this);
         textViewC0.setText(getResources().getString(R.string.id));
@@ -243,6 +259,9 @@ public class VendaListaActivity extends AppCompatActivity {
 
         for (VendaClientePedido v: vendas) {
 
+            vendasIdsBaixar.add(v.getIdVenda());
+
+            statusVenda = v.getPago() ? "Status: pago" : "Status: não pago";
             total += v.getTotal();
 
             TextView textViewID = new TextView(this);
@@ -295,8 +314,28 @@ public class VendaListaActivity extends AppCompatActivity {
             tbVendas.addView(tableRow);
         }
 
-        @SuppressLint("DefaultLocale") String totalGeral = "R$ " + String.format("%.2f", total);
+        @SuppressLint("DefaultLocale")
+        String totalGeral = "R$ " + String.format("%.2f", total) + "  " + statusVenda;
         tvTotal.setText(totalGeral);
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void baixarVendas() {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                for (Integer id: vendasIdsBaixar) {
+                    db.vendaDao().baixarVendaById(id);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Vendas baixadas com sucesso!",
+                        Toast.LENGTH_LONG).show();
+            }
+        }.execute();
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -311,7 +350,6 @@ public class VendaListaActivity extends AppCompatActivity {
             } else if (!swPedido.isChecked() && swCliente.isChecked()) {
                 vendas = db.vendaDao().getVendasByClienteId(clienteId);
             }
-
             return null;
         }
 
