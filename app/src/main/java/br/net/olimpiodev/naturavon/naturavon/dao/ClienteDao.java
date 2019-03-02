@@ -27,6 +27,10 @@ public interface ClienteDao {
     @Query("SELECT c.id AS chave, (c.nome || ' - ' || c.referencia) AS valor FROM cliente AS c ORDER BY nome ASC")
     List<ChaveValor> getClientesDropDown();
 
+    @Query("SELECT c.id AS chave, (c.nome || ' - ' || c.referencia) AS valor FROM pedido AS p INNER JOIN venda AS v ON v.pedido_id = p.id" +
+            " INNER JOIN cliente AS c ON c.id = v.cliente_id WHERE p.id = :pedidoId GROUP BY c.id ORDER BY nome ASC")
+    List<ChaveValor> getClientesDropDownByPedidoId(int pedidoId);
+
     @Query("SELECT * FROM cliente WHERE sincronizado = :sincronizado ORDER BY id ASC")
     List<Cliente> getClientesNaoSincronizados(boolean sincronizado);
 

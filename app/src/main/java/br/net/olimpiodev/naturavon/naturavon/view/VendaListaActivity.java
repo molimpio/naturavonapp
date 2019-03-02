@@ -28,11 +28,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import br.net.olimpiodev.naturavon.naturavon.AppDatabase;
 import br.net.olimpiodev.naturavon.naturavon.R;
-import br.net.olimpiodev.naturavon.naturavon.Utils;
 import br.net.olimpiodev.naturavon.naturavon.model.ChaveValor;
 import br.net.olimpiodev.naturavon.naturavon.model.Venda;
 import br.net.olimpiodev.naturavon.naturavon.model.VendaClientePedido;
@@ -84,6 +82,8 @@ public class VendaListaActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 pedidoId = pedidos.get(position).getChave();
+                GetDadosDropDownCliente getDadosDropDownCliente = new GetDadosDropDownCliente();
+                getDadosDropDownCliente.execute();
             }
 
             @Override
@@ -109,8 +109,8 @@ public class VendaListaActivity extends AppCompatActivity {
             }
         });
 
-        GetDadosDropDowns getDadosDropDowns = new GetDadosDropDowns();
-        getDadosDropDowns.execute();
+        GetDadosDropDownPedido getDadosDropDownPedido = new GetDadosDropDownPedido();
+        getDadosDropDownPedido.execute();
     }
 
     @Override
@@ -191,11 +191,13 @@ public class VendaListaActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void startSpinners() {
+    private void startSpinnerPedido() {
         ArrayAdapter<ChaveValor> adapterPedidos = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, pedidos);
         spPedidos.setAdapter(adapterPedidos);
+    }
 
+    private void startSpinnerCliente() {
         ArrayAdapter<ChaveValor> adapterClientes = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item, clientes);
         spCliente.setAdapter(adapterClientes);
@@ -360,18 +362,32 @@ public class VendaListaActivity extends AppCompatActivity {
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class GetDadosDropDowns extends AsyncTask<Void, Void, Void> {
+    private class GetDadosDropDownPedido extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            clientes = db.clienteDao().getClientesDropDown();
             pedidos = db.pedidoDao().getPedidosDropDown();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            startSpinners();
+            startSpinnerPedido();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class GetDadosDropDownCliente extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            clientes = db.clienteDao().getClientesDropDownByPedidoId(pedidoId);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            startSpinnerCliente();
         }
     }
 }
