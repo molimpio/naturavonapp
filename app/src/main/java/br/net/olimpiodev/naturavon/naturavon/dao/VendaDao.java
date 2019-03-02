@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.widget.ListAdapter;
 
 import java.util.List;
 
@@ -59,5 +60,9 @@ public interface VendaDao {
 
     @Query("UPDATE venda SET pago = 1 where id = :vendaId")
     void baixarVendaById(int vendaId);
+
+    @Query("SELECT (c.nome || ' RS ' || sum(v.total)) AS total FROM pedido AS p INNER JOIN venda AS v ON v.pedido_id = p.id INNER JOIN cliente AS c ON c.id = v.cliente_id  WHERE p.id = :pedidoId AND v.pago = 0 GROUP BY c.id ORDER BY nome ASC")
+    List<String> getClienteNaoPagaram(int pedidoId);
+
 
 }

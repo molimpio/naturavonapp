@@ -13,4 +13,10 @@
         android:icon="@mipmap/baseline_add_white_24"
         android:title="@string/cadastrar"
         />
+    <item
+        android:id="@+id/pesquisarNaoPagaram"
+        app:showAsAction="ifRoom"
+        android:icon="@mipmap/baseline_info_white_24"
+        android:title="@string/info"
+        />
 </menu>

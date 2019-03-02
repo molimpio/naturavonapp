@@ -1,6 +1,7 @@
 package br.net.olimpiodev.naturavon.naturavon.view;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -129,9 +130,51 @@ public class VendaListaActivity extends AppCompatActivity {
             case R.id.removerVenda:
                 removerVenda();
                 return true;
+            case R.id.pesquisarNaoPagaram:
+                consultarClientesNaoPagos();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private void consultarClientesNaoPagos() {
+
+        new AsyncTask<Void, Void, List<String>>(){
+            @Override
+            protected List<String> doInBackground(Void... voids) {
+                List<String> clientesNaoPagaram = db.vendaDao().getClienteNaoPagaram(pedidoId);
+                Log.i("cli", clientesNaoPagaram.toString());
+                return clientesNaoPagaram;
+            }
+
+            @Override
+            protected void onPostExecute(List<String> clientesNaoPagaram) {
+                listarClientesNaoPagaram(clientesNaoPagaram);
+            }
+        }.execute();
+    }
+
+    private void listarClientesNaoPagaram(List<String> clientes) {
+
+        String[] clienteNaoPagaram = new String[clientes.size()];
+
+        for (int i=0; i < clientes.size(); i++) {
+            clienteNaoPagaram[i] = "" + clientes.get(i);
+        }
+
+        AlertDialog alertDialog;
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Faltam Pagar");
+
+        alertDialogBuilder.setItems(clienteNaoPagaram, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) { }
+                });
+
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private void removerVenda() {
@@ -382,6 +425,21 @@ public class VendaListaActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             clientes = db.clienteDao().getClientesDropDownByPedidoId(pedidoId);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            startSpinnerCliente();
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private class getClienteNaoPagaram extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            db.vendaDao().getClienteNaoPagaram(pedidoId);
             return null;
         }
 
